@@ -16,7 +16,6 @@ def criar_janela_novo_evento():
 
     return sg.Window('PaceHub - Novo Evento', layout, finalize=True)
 
-# Bloco principal para executar a janela
 if __name__ == '__main__':
     janela_novo_evento = criar_janela_novo_evento()
 
@@ -25,7 +24,6 @@ if __name__ == '__main__':
         if event in (sg.WIN_CLOSED, '-CANCELAR-'):
             break
         if event == '-SALVAR-':
-            # Simulação de validação
             if all(values.values()):
                 sg.popup('Evento criado com sucesso!')
                 break
