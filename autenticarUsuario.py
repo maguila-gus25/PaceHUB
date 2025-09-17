@@ -7,7 +7,7 @@ def criar_janela_login():
         [sg.Text('PaceHub', font=('Helvetica', 25), justification='center', expand_x=True)],
         [sg.Text('Sua plataforma de gestão de corridas.', font=('Helvetica', 12), justification='center', expand_x=True)],
         [sg.VPush()],
-        [sg.Text('Email*'), sg.Input(key='-EMAIL-')],
+        [sg.Text('CPF*'), sg.Input(key='-CPF-')],
         [sg.Text('Senha*'), sg.Input(key='-SENHA-', password_char='*')],
         [sg.Text('* Campos obrigatórios', text_color='red')],
         [sg.Button('Login', size=(10, 1), expand_x=True)],
@@ -28,6 +28,6 @@ if __name__ == '__main__':
         if event == sg.WIN_CLOSED:
             break
         if event == 'Login':
-            sg.popup(f"Tentando login com o email: {values['-EMAIL-']}")
+            sg.popup(f"Tentando login com o email: {values['-CPF-']}")
             
     janela.close()
