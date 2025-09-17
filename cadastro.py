@@ -15,29 +15,33 @@ def criar_janela_cadastro(perfil):
     """Cria a janela de cadastro baseada no perfil escolhido ('Atleta' ou 'Organizador')."""
     sg.theme('DarkBlue14')
 
+    # Campos base, comuns a todos os perfis
     layout_base = [
         [sg.Text(f'Cadastro de {perfil}', font=('Helvetica', 20))],
         [sg.Text('Nome Completo*', size=(15, 1)), sg.Input(key='-NOME-')],
         [sg.Text('CPF*', size=(15, 1)), sg.Input(key='-CPF-')],
     ]
 
+    # Campos específicos para o perfil de Atleta
     if perfil == 'Atleta':
         layout_atleta = [
             [sg.Text('Data de Nascimento*', size=(15,1)), sg.Input(key='-DATA_NASC-', size=(12,1)), sg.CalendarButton('Selecionar', target='-DATA_NASC-', format='%d/%m/%Y')],
             [sg.Text('Gênero*', size=(15,1)), sg.Combo(['Masculino', 'Feminino', 'Outro'], key='-GENERO-')],
-            
-            # --- LINHA MODIFICADA ---
-            # Trocamos o Checkbox por dois Radio Buttons para garantir escolha única.
-            # O nome 'GRUPO_PCD' conecta os dois botões.
             [sg.Text('PCD*', size=(15,1)), 
              sg.Radio('Sim', 'GRUPO_PCD', key='-PCD_SIM-'), 
              sg.Radio('Não', 'GRUPO_PCD', key='-PCD_NAO-', default=True)],
-            
-            [sg.Text('Email*', size=(15,1)), sg.Input(key='-EMAIL-')],
-            [sg.Text('Senha*', size=(15,1)), sg.Input(key='-SENHA-', password_char='*')],
         ]
         layout_base.extend(layout_atleta)
 
+    # --- ALTERAÇÃO PRINCIPAL ---
+    # Campos de login (Email/Senha) agora são adicionados para AMBOS os perfis
+    layout_login = [
+        [sg.Text('Email*', size=(15,1)), sg.Input(key='-EMAIL-')],
+        [sg.Text('Senha*', size=(15,1)), sg.Input(key='-SENHA-', password_char='*')],
+    ]
+    layout_base.extend(layout_login)
+
+    # Botões e texto final, comuns a todos
     layout_final = [
         [sg.Text('* Todos os campos são obrigatórios.', text_color='red')],
         [sg.Button('Cadastrar', key='-CADASTRAR-', size=(10, 1))],
@@ -69,19 +73,20 @@ if __name__ == '__main__':
             if event in (sg.WIN_CLOSED, '-VOLTAR-'):
                 break
             if event == '-CADASTRAR-':
+                # Coleta os dados que são comuns a ambos
                 dados = f"Cadastro de {perfil_escolhido} realizado com sucesso!\n"
                 dados += f"Nome: {values['-NOME-']}\n"
                 dados += f"CPF: {values['-CPF-']}\n"
+                
+                # --- LÓGICA DE COLETA MODIFICADA ---
+                # Adiciona o email para ambos, pois agora é um campo comum
+                dados += f"Email: {values['-EMAIL-']}\n"
 
+                # Adiciona os dados que são exclusivos do atleta
                 if perfil_escolhido == 'Atleta':
                     dados += f"Gênero: {values['-GENERO-']}\n"
-                    
-                    # --- LÓGICA DE COLETA MODIFICADA ---
-                    # Verificamos o valor da chave '-PCD_SIM-'. Ele será True ou False.
                     eh_pcd = values['-PCD_SIM-']
                     dados += f"É PCD: {eh_pcd}\n"
-                    
-                    dados += f"Email: {values['-EMAIL-']}\n"
 
                 sg.popup(dados)
                 break
