@@ -29,7 +29,7 @@ def criar_janela_visualizar_eventos():
          sg.Button('Cancelar Inscrição', key='-CANCELAR-')]
     ]
     
-    return sg.Window('PaceHub - Painel do Atleta', layout, size=(700, 400), finalize=True)
+    return sg.Window('PaceHub - Painel do Atleta', layout, size=(800, 500), finalize=True)
 
 if __name__ == '__main__':
     janela_atleta = criar_janela_visualizar_eventos()

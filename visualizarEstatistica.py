@@ -20,7 +20,7 @@ def criar_janela_visualizar_estatisticas():
         [sg.Button('Voltar', key='-VOLTAR-')]
     ]
 
-    return sg.Window('PaceHub - Estatísticas do Evento', layout, size=(500, 400), finalize=True)
+    return sg.Window('PaceHub - Estatísticas do Evento', layout, size=(600, 400), finalize=True)
 
 if __name__ == '__main__':
     janela_visualizar_estatisticas = criar_janela_visualizar_estatisticas()
