@@ -8,7 +8,7 @@ def criar_painel_organizador():
         ["Meia Maratona de Inverno", "10/08/2025", 1530, "Concluído"],
         ["Corrida Solidária", "30/09/2025", 875, "Inscrições Abertas"],
         ["Maratona de Floripa", "25/10/2025", 450, "Inscrições Abertas"],
-        ["Night Run - Edição Halloween", "31/10/2025", 0, "Planejado"],
+        ["Night Run - Edição Halloween", "31/10/2025", 0, "Concluído"],
     ]
     
     # --- CRIAÇÃO DO LAYOUT DINÂMICO (SUBSTITUINDO A TABELA) ---
