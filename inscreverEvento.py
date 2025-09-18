@@ -16,6 +16,11 @@ boas condições de saúde e ter treinado apropriadamente para a prova.
         [sg.Text('Confirme seus dados cadastrais:')],
         [sg.Text('Nome: [Nome do Atleta]')],
         [sg.Text('CPF: [CPF do Atleta]')],
+        
+        # --- LINHA ADICIONADA ---
+        # Dropdown para a escolha do kit.
+        [sg.Text('Escolha do Kit*', size=(15,1)), sg.Combo(['Completo R$75,00', 'Camiseta R$50,00', 'Sem Kit'], default_value='Completo', readonly=True, key='-KIT-')],
+
         [sg.HorizontalSeparator()],
         [sg.Text('Ficha Médica e Termo de Responsabilidade', font=('Helvetica', 12))],
         [sg.Multiline(default_text=termo_responsabilidade, disabled=True, size=(60, 8), autoscroll=True)],
@@ -25,7 +30,7 @@ boas condições de saúde e ter treinado apropriadamente para a prova.
         [sg.Button('Confirmar Inscrição', key='-CONFIRMAR-'), sg.Button('Voltar', key='-VOLTAR-')]
     ]
 
-    return sg.Window('PaceHub - Inscrição', layout, size=(500, 450), finalize=True)
+    return sg.Window('PaceHub - Inscrição', layout, size=(500, 500), finalize=True, resizable=True)
 
 # Bloco principal para executar a janela
 if __name__ == '__main__':
@@ -39,7 +44,10 @@ if __name__ == '__main__':
             break
         if event == '-CONFIRMAR-':
             if values['-TERMO_ACEITO-'] and values['-SAUDE_OK-']:
-                sg.popup('Inscrição confirmada com sucesso!')
+                # --- POPUP MODIFICADO ---
+                # Coleta o valor do kit selecionado e o exibe na confirmação.
+                kit_selecionado = values['-KIT-']
+                sg.popup(f'Inscrição confirmada com sucesso!\n\nKit Selecionado: {kit_selecionado}')
                 break
             else:
                 sg.popup_error('Você precisa aceitar os termos e confirmar sua condição de saúde para se inscrever.')
