@@ -1,10 +1,10 @@
+# usuario.py
+
 import hashlib
 import os
 
 class Usuario:
-    """
-    Classe base com atributos de usuário e hashing de senha (RNF05).
-    """
+    """Define a estrutura base de um usuário com seus dados e lógica de senha."""
     def __init__(self, nome: str, cpf: str, email: str, senha: str):
         self.nome = nome
         self.cpf = cpf
@@ -12,8 +12,8 @@ class Usuario:
         self.senha_hash = self._hash_senha(senha)
 
     def _hash_senha(self, senha: str) -> str:
-        """Gera um hash seguro para a senha usando salt."""
-        salt = os.urandom(32) # Gera um salt aleatório
+        """Gera um hash seguro para a senha usando salt (RNF05)."""
+        salt = os.urandom(32)
         senha_com_salt = salt + senha.encode('utf-8')
         hash_obj = hashlib.sha256(senha_com_salt)
         return salt.hex() + ':' + hash_obj.hexdigest()
