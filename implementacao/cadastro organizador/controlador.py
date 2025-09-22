@@ -1,10 +1,8 @@
-# controller.py
-
 import PySimpleGUI as sg
-from organizador import Organizador
-from organizador_model import OrganizadorModel
-from view import criar_janela_login, criar_janela_cadastro, exibir_popup_erro, exibir_popup_sucesso
-from validations import validar_nome_completo, validar_email, validar_cpf
+import re
+
+from modelo import Organizador, OrganizadorModel, validar_nome_completo, validar_email, validar_cpf
+from visao import criar_janela_login, criar_janela_cadastro, exibir_popup_erro, exibir_popup_sucesso
 
 class OrganizadorController:
     def __init__(self):
@@ -13,7 +11,6 @@ class OrganizadorController:
         self.janela_cadastro = None
 
     def run(self):
-        """Inicia o loop principal de eventos da aplicação."""
         while True:
             window, event, values = sg.read_all_windows()
 
@@ -46,49 +43,51 @@ class OrganizadorController:
         self.janela_login.un_hide()
 
     def cadastrar_organizador(self, values):
-        """Processa e valida os dados do formulário de cadastro."""
         nome = values['-NOME-']
-        cpf = values['-CPF-']
+        cpf_input = values['-CPF-']
         email = values['-EMAIL-']
         senha = values['-SENHA-']
 
-        # Validações
-        if not all([nome, cpf, email, senha]):
+        if not all([nome, cpf_input, email, senha]):
             exibir_popup_erro('Todos os campos com * são obrigatórios!')
             return
         if not validar_nome_completo(nome):
             exibir_popup_erro('Por favor, insira seu nome completo (nome e sobrenome).')
             return
+        if not validar_cpf(cpf_input):
+            exibir_popup_erro('O CPF inserido é inválido!')
+            return
         if not validar_email(email):
             exibir_popup_erro('O formato do e-mail inserido é inválido.')
             return
-        if not validar_cpf(cpf):
-            exibir_popup_erro('O CPF inserido é inválido!')
-            return
         
-        # Interação com o Modelo para verificar regra de negócio (RN12)
-        if self.organizador_model.cpf_ja_existe(cpf):
-            exibir_popup_erro(f'O CPF {cpf} já está cadastrado no sistema.')
+        if self.organizador_model.cpf_ja_existe(cpf_input):
+            exibir_popup_erro(f'O CPF {cpf_input} já está cadastrado no sistema.')
             return
 
-        # Cria a instância do organizador
-        organizador = Organizador(nome=nome, cpf=cpf, email=email, senha=senha)
-        # Adiciona ao nosso "banco de dados" em memória
+        cpf_limpo = ''.join(re.findall(r'\d', cpf_input))
+
+        organizador = Organizador(nome=nome, cpf=cpf_limpo, email=email, senha=senha)
+        
         self.organizador_model.adicionar_organizador(organizador)
         
-        # --- [NOVA ADIÇÃO] IMPRESSÃO DOS DADOS NO TERMINAL ---
-        print("\n--- [DEBUG] Dados do Organizador a serem salvos ---")
+        print("\n--- [DEBUG] Dados do Organizador Salvo ---")
         print(f"Nome: {organizador.nome}")
         print(f"CPF: {organizador.cpf}")
         print(f"Email: {organizador.email}")
-        print(f"Senha Hash: {organizador.senha_hash}") # Importante: Imprimindo o HASH, não a senha original (RNF05)
-        print("--------------------------------------------------\n")
-        # --- FIM DA ADIÇÃO ---
+        print(f"Senha Hash: {organizador.senha_hash}")
+        print("-------------------------------------------\n")
 
-        # Atualização da Visão com o resultado
         exibir_popup_sucesso('Cadastro Realizado com Sucesso!', f"Dados cadastrados:\n\n{organizador}")
         self.fechar_janela_cadastro()
 
 if __name__ == '__main__':
+    try:
+        import PySimpleGUI as sg
+    except ImportError:
+        print("Erro: PySimpleGUI não está instalado.")
+        print("Por favor, instale usando: pip install PySimpleGUI")
+        exit()
+        
     controller = OrganizadorController()
     controller.run()

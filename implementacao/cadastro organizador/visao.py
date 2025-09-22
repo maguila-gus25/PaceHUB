@@ -1,9 +1,6 @@
-# view.py
-
 import PySimpleGUI as sg
 
 def criar_janela_login():
-    """Cria e retorna a janela de login."""
     sg.theme('DarkBlue14')
     layout = [
         [sg.Text('PaceHub', font=('Helvetica', 25), justification='center', expand_x=True)],
@@ -22,7 +19,6 @@ def criar_janela_login():
     return sg.Window('PaceHub - Bem-vindo', layout, size=(400, 350), finalize=True)
 
 def criar_janela_cadastro(perfil: str):
-    """Cria e retorna a janela de cadastro."""
     sg.theme('DarkBlue14')
     layout_usuario = [
         [sg.Text(f'Cadastro de {perfil}', font=('Helvetica', 20))],
