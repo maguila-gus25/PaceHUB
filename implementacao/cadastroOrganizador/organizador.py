@@ -1,9 +1,11 @@
+# arquivo: organizador.py (modificado)
+
 from usuario import Usuario
 from evento import Evento
 
 class Organizador(Usuario):
-    def __init__(self, nome: str, cpf: str, email: str, senha: str):
-        super().__init__(nome, cpf, email, senha)
+    def __init__(self, nome: str, cpf: str, email: str):
+        super().__init__(nome, cpf, email)
         self.eventos = []
 
     def adicionar_evento(self, evento: Evento):

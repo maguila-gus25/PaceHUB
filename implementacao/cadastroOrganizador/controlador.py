@@ -1,12 +1,12 @@
+# arquivo: controlador.py (modificado)
+
 import PySimpleGUI as sg
 import re
+import bcrypt # Importação adicionada
 
-# --- IMPORTS MODIFICADOS ---
 from organizador import Organizador
 from organizador_model import OrganizadorModel
 from validadores import validar_nome_completo, validar_email, validar_cpf
-# ---------------------------
-
 from visao import criar_janela_login, criar_janela_cadastro, exibir_popup_erro, exibir_popup_sucesso
 
 class OrganizadorController:
@@ -14,6 +14,15 @@ class OrganizadorController:
         self.organizador_model = OrganizadorModel()
         self.janela_login = criar_janela_login()
         self.janela_cadastro = None
+        
+    def _hash_senha(self, senha: str) -> str:
+        """
+        Gera um hash seguro para a senha usando bcrypt.
+        """
+        senha_bytes = senha.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hash_bytes = bcrypt.hashpw(senha_bytes, salt)
+        return hash_bytes.decode('utf-8')
 
     def run(self):
         while True:
@@ -23,7 +32,6 @@ class OrganizadorController:
                 break
             
             if event == 'Login':
-                # A lógica de login seria implementada aqui
                 pass
 
             if event == '-CADASTRO_ORGANIZADOR-':
@@ -56,6 +64,7 @@ class OrganizadorController:
         if not all([nome, cpf_input, email, senha]):
             exibir_popup_erro('Todos os campos com * são obrigatórios!')
             return
+        # ... (outras validações permanecem iguais) ...
         if not validar_nome_completo(nome):
             exibir_popup_erro('Por favor, insira seu nome completo (nome e sobrenome).')
             return
@@ -72,7 +81,11 @@ class OrganizadorController:
 
         cpf_limpo = ''.join(re.findall(r'\d', cpf_input))
 
-        organizador = Organizador(nome=nome, cpf=cpf_limpo, email=email, senha=senha)
+        # --- LÓGICA DE HASHING MOVIDA PARA CÁ ---
+        senha_hash = self._hash_senha(senha)
+        organizador = Organizador(nome=nome, cpf=cpf_limpo, email=email)
+        organizador.senha_hash = senha_hash
+        # ----------------------------------------
         
         self.organizador_model.adicionar_organizador(organizador)
         
@@ -87,12 +100,5 @@ class OrganizadorController:
         self.fechar_janela_cadastro()
 
 if __name__ == '__main__':
-    try:
-        import PySimpleGUI as sg
-    except ImportError:
-        print("Erro: PySimpleGUI não está instalado.")
-        print("Por favor, instale usando: pip install PySimpleGUI")
-        exit()
-        
     controller = OrganizadorController()
     controller.run()
