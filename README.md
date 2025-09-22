@@ -94,7 +94,7 @@ O sistema é modelado através de um conjunto de classes inter-relacionadas:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <url-do-seu-repositorio>
+    git clone https://github.com/maguila-gus25/PaceHUB
     cd <diretorio-do-projeto>
     ```
 
@@ -118,4 +118,5 @@ O sistema é modelado através de um conjunto de classes inter-relacionadas:
     * Na tela inicial, você pode fazer o login ou se cadastrar.
     * Escolha entre "Cadastrar como Atleta" ou "Cadastrar como Organizador".
     * Preencha o formulário e utilize as funcionalidades disponíveis para o seu perfil.
+
 
