@@ -1,7 +1,12 @@
 import PySimpleGUI as sg
 import re
 
-from modelo import Organizador, OrganizadorModel, validar_nome_completo, validar_email, validar_cpf
+# --- IMPORTS MODIFICADOS ---
+from organizador import Organizador
+from organizador_model import OrganizadorModel
+from validadores import validar_nome_completo, validar_email, validar_cpf
+# ---------------------------
+
 from visao import criar_janela_login, criar_janela_cadastro, exibir_popup_erro, exibir_popup_sucesso
 
 class OrganizadorController:
