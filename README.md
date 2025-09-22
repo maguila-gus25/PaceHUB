@@ -101,7 +101,7 @@ O sistema é modelado através de um conjunto de classes inter-relacionadas:
 2.  **Instale as dependências:**
     Certifique-se de que você tem o arquivo `requirements.txt` com o conteúdo abaixo.
     ```
-    PySimpleGUI==4.60.5
+    PySimpleGUI==5.0.10
     ```
     Execute o comando de instalação:
     ```bash
@@ -118,3 +118,4 @@ O sistema é modelado através de um conjunto de classes inter-relacionadas:
     * Na tela inicial, você pode fazer o login ou se cadastrar.
     * Escolha entre "Cadastrar como Atleta" ou "Cadastrar como Organizador".
     * Preencha o formulário e utilize as funcionalidades disponíveis para o seu perfil.
+
