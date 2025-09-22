@@ -1,2 +1,2 @@
 ﻿PySimpleGUI==5.0.10
-
+bcrypt==4.1.2
