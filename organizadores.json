@@ -10,5 +10,11 @@
         "cpf": "07998448962",
         "email": "gustavo@email.com",
         "senha_hash": "$2b$12$jv2aHbqM4aAthNoMe2h4i.S6w4qQdmAQt3bzfC1/hZR7QJJslinny"
+    },
+    {
+        "nome": "Gustavo Ramos",
+        "cpf": "11555884016",
+        "email": "gustavo@gmail.com",
+        "senha_hash": "$2b$12$pJiw6V1z2IJSX2nyHogeZOPQXZsdKOB6bEkSw0WspwlRB4Fm0OM7C"
     }
 ]

@@ -1,8 +1,6 @@
-# arquivo: controlador.py (modificado)
-
 import PySimpleGUI as sg
 import re
-import bcrypt # Importação adicionada
+import bcrypt
 
 from organizador import Organizador
 from organizador_model import OrganizadorModel
@@ -16,9 +14,6 @@ class OrganizadorController:
         self.janela_cadastro = None
         
     def _hash_senha(self, senha: str) -> str:
-        """
-        Gera um hash seguro para a senha usando bcrypt.
-        """
         senha_bytes = senha.encode('utf-8')
         salt = bcrypt.gensalt()
         hash_bytes = bcrypt.hashpw(senha_bytes, salt)
@@ -64,7 +59,6 @@ class OrganizadorController:
         if not all([nome, cpf_input, email, senha]):
             exibir_popup_erro('Todos os campos com * são obrigatórios!')
             return
-        # ... (outras validações permanecem iguais) ...
         if not validar_nome_completo(nome):
             exibir_popup_erro('Por favor, insira seu nome completo (nome e sobrenome).')
             return
@@ -81,11 +75,9 @@ class OrganizadorController:
 
         cpf_limpo = ''.join(re.findall(r'\d', cpf_input))
 
-        # --- LÓGICA DE HASHING MOVIDA PARA CÁ ---
         senha_hash = self._hash_senha(senha)
         organizador = Organizador(nome=nome, cpf=cpf_limpo, email=email)
         organizador.senha_hash = senha_hash
-        # ----------------------------------------
         
         self.organizador_model.adicionar_organizador(organizador)
         

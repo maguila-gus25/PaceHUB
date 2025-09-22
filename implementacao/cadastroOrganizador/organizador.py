@@ -1,5 +1,3 @@
-# arquivo: organizador.py (modificado)
-
 from usuario import Usuario
 from evento import Evento
 

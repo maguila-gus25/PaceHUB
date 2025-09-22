@@ -1,4 +1,3 @@
-# arquivo: database.py (modificado)
 import json
 import os
 from organizador import Organizador
@@ -19,7 +18,6 @@ class Database:
         
         organizadores = []
         for org_data in data:
-            # --- AJUSTE NA CRIAÇÃO DO OBJETO ---
             organizador = Organizador(
                 nome=org_data['nome'],
                 cpf=org_data['cpf'],
@@ -27,7 +25,6 @@ class Database:
             )
             organizador.senha_hash = org_data['senha_hash']
             organizadores.append(organizador)
-            # -----------------------------------
             
         return organizadores
 
