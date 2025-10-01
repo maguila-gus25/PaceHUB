@@ -1,6 +1,6 @@
 import re
-from organizador import Organizador
-from database import Database
+from implementacao.cadastroOrganizador.entidade.organizador import Organizador
+from implementacao.cadastroOrganizador.persistencia.database import Database
 
 class OrganizadorModel:
     def __init__(self):

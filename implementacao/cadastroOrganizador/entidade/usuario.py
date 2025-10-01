@@ -1,8 +1,11 @@
-class Usuario:
-    def __init__(self, nome: str, cpf: str, email: str):
+from abc import ABC
+
+class Usuario(ABC):
+    def __init__(self, nome: str, cpf: str, email: str, perfil: str):
         self.nome = nome
         self.cpf = cpf
         self.email = email
+        self.perfil = perfil
         self.senha_hash = None
 
     def __str__(self):
