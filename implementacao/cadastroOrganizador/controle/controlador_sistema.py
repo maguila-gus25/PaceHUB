@@ -1,6 +1,9 @@
 import PySimpleGUI as sg
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from limite.tela_sistema import TelaSistema
-from controlador_organizador import ControladorOrganizador
+from controle.controlador_organizador import ControladorOrganizador
 
 class ControladorSistema:
     def __init__(self):

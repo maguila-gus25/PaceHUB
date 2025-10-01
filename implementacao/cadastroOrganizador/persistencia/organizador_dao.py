@@ -1,10 +1,17 @@
 import sqlite3
 import re
+import os
 from entidade.organizador import Organizador
 
 class OrganizadorDAO:
-    def __init__(self, db_file='banco.db'):
-        self.db_file = db_file
+    def __init__(self, db_file=None):
+        if db_file is None:
+            # Use the main database in implementacao directory
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            main_implementacao_dir = os.path.join(current_dir, '..', '..')
+            self.db_file = os.path.join(main_implementacao_dir, 'banco.db')
+        else:
+            self.db_file = db_file
 
     def _conectar(self):
         return sqlite3.connect(self.db_file)

@@ -3,6 +3,9 @@ import PySimpleGUI as sg
 import bcrypt
 from entidade.organizador import Organizador
 from persistencia.organizador_dao import OrganizadorDAO
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from limite.tela_sistema import TelaSistema
 from validadores import validar_nome_completo, validar_email, validar_cpf
 
@@ -20,6 +23,10 @@ class ControladorOrganizador:
 
     def abrir_tela_cadastro(self):
         self.janela_cadastro = self.tela_sistema.criar_janela_cadastro_organizador()
+        
+        if self.janela_cadastro is None:
+            print("Error: Failed to create window")
+            return
         
         while True:
             event, values = self.janela_cadastro.read()
@@ -67,4 +74,4 @@ class ControladorOrganizador:
         self.organizador_dao.salvar(organizador)
         
         self.tela_sistema.exibir_popup_sucesso('Cadastro Realizado com Sucesso!', f"Dados cadastrados:\n\n{organizador}")
-        self.fechar_tela_cadastro()
+        # Não fechar a janela aqui - deixar o usuário decidir quando fechar
