@@ -1,22 +1,25 @@
 import re
 from abc import ABC
-
 import bcrypt
 
 
 class Usuario(ABC):
-    def __init__(self, cpf, nome, email, senha_hash, perfil):
-        if self.validar_cpf(cpf):
-            self.__cpf = cpf
+    def __init__(self, cpf, nome, email, senha_hash):
+        cpf_limpo_validado = self.validar_cpf(cpf)
+
+        if cpf_limpo_validado:
+            self.__cpf = cpf_limpo_validado
         else:
             raise ValueError(f'O CPF {cpf} é inválido.')
+
         self.__nome = nome
+
         if self.validar_email(email):
             self.__email = email
         else:
             raise ValueError(f'O email {email} é inválido.')
+
         self.__senha_hash = senha_hash
-        self.__perfil = perfil
 
     @property
     def nome(self):
@@ -32,10 +35,12 @@ class Usuario(ABC):
 
     @cpf.setter
     def cpf(self, cpf):
-        if self.validar_cpf(cpf):
-            self.__cpf = cpf
+        cpf_limpo_validado = self.validar_cpf(cpf)
+
+        if cpf_limpo_validado:
+            self.__cpf = cpf_limpo_validado
         else:
-            raise ValueError(f'O CPF {cpf} é inválido.')
+            raise ValueError(f'O CPF {cpf} é inválido')
 
     @property
     def email(self):
@@ -47,14 +52,6 @@ class Usuario(ABC):
             self.__email = email
         else:
             raise ValueError(f'O email {email} é inválido')
-
-    @property
-    def perfil(self):
-        return self.__perfil
-
-    @perfil.setter
-    def perfil(self, perfil):
-        self.__perfil = perfil
 
     @property
     def senha_hash(self):
@@ -69,7 +66,7 @@ class Usuario(ABC):
         return bcrypt.checkpw(senha_em_bytes, hassh_em_bytes)
 
     @staticmethod
-    def validar_cpf(cpf) -> bool:
+    def validar_cpf(cpf) -> str | bool:
         cpf_limpo = re.sub(r'[^0-9]', '', cpf)
 
         if len(cpf_limpo) != 11:
@@ -97,7 +94,7 @@ class Usuario(ABC):
 
         if int(cpf_limpo[10]) != digito_verificador_2:
             return False
-        return True
+        return cpf_limpo
 
     @staticmethod
     def validar_email(email) -> bool:

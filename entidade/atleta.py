@@ -3,8 +3,7 @@ from datetime import datetime
 
 class Atleta(Usuario):
     def __init__(self, nome, cpf, email, senha_hash, data_nascimento, genero, pcd):
-        super().__init__(cpf, nome, email, senha_hash, perfil = 'Atleta')
-        data_convertida = None
+        super().__init__(cpf, nome, email, senha_hash)
         try:
             data_convertida = datetime.strptime(data_nascimento, "%d/%m/%Y")
         except ValueError:

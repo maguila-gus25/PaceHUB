@@ -1,5 +1,6 @@
 import sqlite3
 from entidade.atleta import Atleta
+from entidade.organizador import Organizador
 
 
 class UsuarioDAO:
@@ -21,7 +22,7 @@ class UsuarioDAO:
                 usuario.nome,
                 usuario.email,
                 usuario.senha_hash,
-                usuario.perfil,
+                '1',
                 usuario.data_nascimento_str,
                 usuario.genero,
                 int(usuario.pcd)
@@ -33,8 +34,27 @@ class UsuarioDAO:
             """
 
             cursor.execute(sql, dados)
-            conexao.commit()
-            conexao.close()
+
+        if isinstance(usuario, Organizador):
+            dados = (
+                usuario.cpf,
+                usuario.nome,
+                usuario.email,
+                usuario.senha_hash,
+                '0',
+                None,
+                None,
+                None
+            )
+
+            sql = """
+            INSERT INTO usuarios (cpf, nome, email, senha_hash, perfil, data_nascimento, genero, pcd)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            """
+
+            cursor.execute(sql, dados)
+        conexao.commit()
+        conexao.close()
 
     def get(self, cpf):
         conexao = self.__conectar()
@@ -48,9 +68,9 @@ class UsuarioDAO:
         if not dados_tupla:
             return None
 
-        if dados_tupla[4] == 'Atleta':
+        if dados_tupla[4] == '1':
             data_nascimento_str_banco = dados_tupla[5]
-            atleta = Atleta(
+            usuario = Atleta(
                 nome = dados_tupla[1],
                 cpf=dados_tupla[0],
                 email=dados_tupla[2],
@@ -59,7 +79,16 @@ class UsuarioDAO:
                 genero=dados_tupla[6],
                 pcd=bool(dados_tupla[7])
             )
-            return atleta
+            return usuario
+
+        if dados_tupla[4] == '0':
+            usuario = Organizador(
+                nome = dados_tupla[1],
+                cpf=dados_tupla[0],
+                email=dados_tupla[2],
+                senha_hash=dados_tupla[3]
+            )
+            return usuario
         return None
 
     def get_all(self):
@@ -73,8 +102,8 @@ class UsuarioDAO:
 
         usuarios = []
         for dados_tupla in lista_dados:
-            if(dados_tupla[4] == 'Atleta'):
-                atleta = Atleta(
+            if dados_tupla[4] == '1':
+                usuario = Atleta(
                     nome=dados_tupla[1],
                     cpf=dados_tupla[0],
                     email=dados_tupla[2],
@@ -83,10 +112,17 @@ class UsuarioDAO:
                     genero=dados_tupla[6],
                     pcd=bool(dados_tupla[7])
                 )
-                usuarios.append(atleta)
+            if dados_tupla[4] == '0':
+                usuario = Organizador(
+                    nome=dados_tupla[1],
+                    cpf=dados_tupla[0],
+                    email=dados_tupla[2],
+                    senha_hash=dados_tupla[3]
+                )
+            usuarios.append(usuario)
         return usuarios
 
-    def update(self, cpf, usuario):
+    def update(self, usuario):
         conexao = self.__conectar()
         cursor = conexao.cursor()
 
@@ -95,7 +131,7 @@ class UsuarioDAO:
                 usuario.nome,
                 usuario.email,
                 usuario.senha_hash,
-                usuario.perfil,
+                '1',
                 usuario.genero,
                 int(usuario.pcd),
                 usuario.cpf
@@ -109,9 +145,23 @@ class UsuarioDAO:
             pcd = ?
             WHERE cpf = ?; """
             cursor.execute(sql, dados)
-            conexao.commit()
-            conexao.close()
-        return False
+
+        if isinstance(usuario, Organizador):
+            dados = (
+                usuario.nome,
+                usuario.email,
+                usuario.senha_hash,
+                usuario.cpf
+            )
+            sql = """UPDATE usuarios SET 
+            NOME = ?,
+            EMAIL = ?,
+            SENHA_HASH = ?
+            WHERE cpf = ?;"""
+            cursor.execute(sql, dados)
+        conexao.commit()
+        conexao.close()
+        return True
 
 
     def remove(self, cpf):
