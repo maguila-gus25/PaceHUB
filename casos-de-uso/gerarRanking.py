@@ -47,6 +47,16 @@ def criar_janela_rankings():
     dados_master_masc = [[1, "Roberto Assis", "00:49:55"]]
     dados_master_fem = [[1, "Sônia Braga", "00:55:40"]]
 
+    # Categoria PCD (Pessoas com Deficiência)
+    dados_pcd_masc = [
+        [1, "João Silva", "00:52:30"],
+        [2, "Pedro Santos", "00:58:15"],
+    ]
+    dados_pcd_fem = [
+        [1, "Maria Oliveira", "01:05:20"],
+        [2, "Ana Costa", "01:08:45"],
+    ]
+
     # --- LAYOUT DAS ABAS ---
 
     # Aba para a classificação Geral
@@ -76,7 +86,8 @@ def criar_janela_rankings():
             sg.Tab('Geral', layout_geral),
             sg.Tab('Júnior', criar_layout_categoria('Júnior', dados_junior_masc, dados_junior_fem)),
             sg.Tab('Adulto', criar_layout_categoria('Adulto', dados_adulto_masc, dados_adulto_fem)),
-            sg.Tab('Master', criar_layout_categoria('Master', dados_master_masc, dados_master_fem))
+            sg.Tab('Master', criar_layout_categoria('Master', dados_master_masc, dados_master_fem)),
+            sg.Tab('PCD', criar_layout_categoria('PCD', dados_pcd_masc, dados_pcd_fem))
         ]], expand_x=True, expand_y=True)],
         [sg.Button('Voltar', key='-VOLTAR-')]
     ]

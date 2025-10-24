@@ -23,6 +23,7 @@ boas condições de saúde e ter treinado apropriadamente para a prova.
 
         [sg.HorizontalSeparator()],
         [sg.Text('Ficha Médica e Termo de Responsabilidade', font=('Helvetica', 12))],
+        [sg.Text('Preencha a ficha médica'), sg.Button('Preencher', key='-FICHA_MEDICA-', size=(10,1))],
         [sg.Multiline(default_text=termo_responsabilidade, disabled=True, size=(60, 8), autoscroll=True)],
         [sg.Checkbox('Li e aceito os termos de responsabilidade e isenção de riscos.', key='-TERMO_ACEITO-')],
         [sg.Checkbox('Atesto que estou em condições de saúde aptas para a prática da atividade física.', key='-SAUDE_OK-')],
@@ -42,6 +43,37 @@ if __name__ == '__main__':
         event, values = janela_inscricao.read()
         if event in (sg.WIN_CLOSED, '-VOLTAR-'):
             break
+        if event == '-FICHA_MEDICA-':
+            # Abre a tela de ficha médica
+            import fichaMedica
+            janela_ficha = fichaMedica.criar_janela_ficha_medica()
+            
+            # Loop para a janela de ficha médica
+            while True:
+                event_ficha, values_ficha = janela_ficha.read()
+                if event_ficha in (sg.WIN_CLOSED, '-VOLTAR-'):
+                    break
+                if event_ficha == '-SALVAR-':
+                    # Validação do checkbox de declaração
+                    if not values_ficha['-DECLARACAO_SAUDE-']:
+                        sg.popup_error('Você precisa atestar sua condição de saúde.')
+                        continue
+                    
+                    # Verifica se alguma resposta foi "SIM" (indicando possível restrição)
+                    respostas_sim = [
+                        values_ficha['-PERGUNTA1_SIM-'], values_ficha['-PERGUNTA2_SIM-'], values_ficha['-PERGUNTA3_SIM-'],
+                        values_ficha['-PERGUNTA4_SIM-'], values_ficha['-PERGUNTA5_SIM-'], values_ficha['-PERGUNTA6_SIM-'],
+                        values_ficha['-PERGUNTA7_SIM-']
+                    ]
+                    
+                    if any(respostas_sim):
+                        sg.popup('ATENÇÃO: Uma ou mais respostas indicam que você deve consultar um médico antes de praticar atividade física.\n\nRecomendamos que você procure orientação médica antes de participar do evento.')
+                    
+                    sg.popup('Ficha médica salva com sucesso!')
+                    break
+            
+            janela_ficha.close()
+                
         if event == '-CONFIRMAR-':
             if values['-TERMO_ACEITO-'] and values['-SAUDE_OK-']:
                 # --- POPUP MODIFICADO ---
