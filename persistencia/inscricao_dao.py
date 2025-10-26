@@ -1,7 +1,9 @@
 # persistencia/inscricao_dao.py
 import sqlite3
+from typing import LiteralString
 
 from entidade.inscricao import Inscricao
+from entidade.kit_de_corrida import KitDeCorrida
 
 
 class InscricaoDAO:
@@ -43,7 +45,16 @@ class InscricaoDAO:
         conexao.row_factory = sqlite3.Row
         cursor = conexao.cursor()
 
-        sql = "select * from inscricoes where atleta_cpf = ? and evento_id = ?;"
+        sql = ("""
+               select inscricoes.*, 
+               kitsdecorrida.nome as kit_nome,
+               kitsdecorrida.descricao as kit_descricao,
+               kitsdecorrida.valor as kit_valor
+               from inscricoes
+               join kitsdecorrida
+                on inscricoes.kit_id = kitsdecorrida.id
+                where atleta_cpf = ? and inscricoes.evento_id = ?;
+               """)
         cursor.execute(sql, (atleta_cpf, evento_id))
 
         dados = cursor.fetchone()
@@ -58,9 +69,15 @@ class InscricaoDAO:
                 kit_entregue = dados['kit_entregue']
             )
             inscricao.id = dados['id']
-            return inscricao
+
+            kit = KitDeCorrida(
+                nome = dados['kit_nome'],
+                descricao = dados['kit_descricao'],
+                valor = dados['kit_valor']
+            )
+            return inscricao, kit
         conexao.close()
-        return None
+        return None, None
 
     def update_kit_entregue(self, inscricao_id: int, kit_entregue: bool):
         conexao = None
