@@ -1,5 +1,5 @@
 # controle/controlador_inscricao.py
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import re
 # Importe os DAOs e Entidades
 from limite.tela_inscricao import TelaInscricao

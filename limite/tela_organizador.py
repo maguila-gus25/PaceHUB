@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 
 class TelaOrganizador:
     def __init__(self):
@@ -23,7 +23,8 @@ class TelaOrganizador:
                 display_row_numbers=False,
                 expand_x=True
             )],
-            [sg.Button('Gerenciar Entrega de Kits', key='-GERENCIAR_KITS-')]
+            [sg.Button('Gerenciar Entrega de Kits', key='-GERENCIAR_KITS-'),
+             sg.Button('Editar Evento Selecionado', key='-EDITAR_EVENTO-')]
         ]
 
         layout = [

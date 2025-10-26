@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 from controle.controlador_organizador import ControladorOrganizador
 from entidade.atleta import Atleta
 from entidade.organizador import Organizador
@@ -87,7 +87,7 @@ class ControladorSistema:
                 if not indices_selecionados:
                     self.exibir_popup_erro("Por favor, selecione um evento na tabela primeiro.")
                     continue
-
+            
                 indice_selecionado = indices_selecionados[0]
 
                 evento_selecionado = eventos_do_organizador[indice_selecionado]
@@ -96,6 +96,23 @@ class ControladorSistema:
                     evento_selecionado.id,
                     evento_selecionado.nome
                 )
+            if evento == '-EDITAR_EVENTO-':
+                indices_selecionados = valores['-TABELA_EVENTOS-']
+                if not indices_selecionados:
+                    self.exibir_popup_erro("Por favor, selecione um evento na tabela primeiro.")
+                    continue
+
+                indice_selecionado = indices_selecionados[0]
+                evento_selecionado = eventos_do_organizador[indice_selecionado]
+                
+                self.__controlador_evento.abre_tela_editar_evento(
+                    evento_selecionado,
+                    organizador
+                )
+                
+                eventos_do_organizador = self.__evento_dao.get_all_by_organizador(organizador.cpf)
+                dados_tabela_novos = self.preparar_dados_tabela_eventos(eventos_do_organizador)
+                janela_painel['-TABELA_EVENTOS-'].update(values=dados_tabela_novos)
         janela_painel.close()
 
     def preparar_dados_tabela_eventos(self, eventos_do_organizador) -> list:
