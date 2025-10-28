@@ -66,7 +66,7 @@ class ControladorInscricao:
 
         self.__atleta_encontrado = usuario
 
-        inscricao, kit = self.__inscricao_dao.get_by_atleta_and_evento(
+        inscricao, kit = self.__inscricao_dao.get_by_atleta_e_evento(
             self.__atleta_encontrado.cpf,
             evento_id
         )

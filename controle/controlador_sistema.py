@@ -82,6 +82,7 @@ class ControladorSistema:
                 eventos_do_organizador = self.__evento_dao.get_all_by_organizador(organizador.cpf)
                 dados_tabela_novos = self.preparar_dados_tabela_eventos(eventos_do_organizador)
                 janela_painel['-TABELA_EVENTOS-'].update(values=dados_tabela_novos)
+
             if evento == '-GERENCIAR_KITS-':
                 indices_selecionados = valores['-TABELA_EVENTOS-']
                 if not indices_selecionados:

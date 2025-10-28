@@ -19,12 +19,12 @@ class TelaPrincipal:
             [sg.Push(), sg.Text("PaceHub", font=("Helvetica", 25)), sg.Push()],
             [sg.Push(), sg.Text("Sua plataforma de gestão de corridas.", font=("Helvetica", 12)), sg.Push()],
             [sg.Frame("Login", layout_login, pad=(0, 10))],
-            [sg.Button("Login", key='Login', expand_x=True, pad=5)],
+            [sg.Button("Login", key='Login', expand_x=True, pad=(0, (10, 0)))],
             [sg.HSeparator(pad=(0, 10))],
             [sg.Text("Ainda não tem uma conta? Cadastre-se agora!", justification='center', expand_x=True)],
-            [sg.Button("Cadastrar como Atleta", key='-CADASTRO_ATLETA-', expand_x=True, pad=(0, 5))],
-            [sg.Button("Cadastrar como Organizador", key='-CADASTRO_ORGANIZADOR-', expand_x=True)],
-            [sg.Button("Criar Novo Evento", key='-CRIAR_EVENTO-', expand_x=True, pad=(0, 5))],
+            [sg.Button("Cadastrar como Atleta", key='-CADASTRO_ATLETA-', expand_x=True, pad=(0, (10, 0)))],
+            [sg.Button("Cadastrar como Organizador", key='-CADASTRO_ORGANIZADOR-', expand_x=True,pad=(0, (10, 0)))],
+            [sg.Button("Criar Novo Evento", key='-CRIAR_EVENTO-', expand_x=True, pad=(0, (10, 0)))],
             [sg.Button("Listar Atletas", key='-LISTAR_ATLETAS-', expand_x=True, pad=(0, (10, 0)))],
             [sg.Button("Listar Organizadores", key='-LISTAR_ORGANIZADORES-', expand_x=True, pad=(0, (10, 0)))]
         ]

@@ -40,7 +40,7 @@ class InscricaoDAO:
             print(f"Inscrição ID {inscricao.id} salva para o atleta {inscricao.atleta_cpf}")
             conexao.close()
 
-    def get_by_atleta_and_evento(self, atleta_cpf, evento_id):
+    def get_by_atleta_e_evento(self, atleta_cpf, evento_id):
         conexao = self.__conectar()
         conexao.row_factory = sqlite3.Row
         cursor = conexao.cursor()
