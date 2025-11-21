@@ -1,18 +1,6 @@
-#!/usr/bin/env python3
-"""
-Sistema de Importação de Tempos de Participantes - PaceHub
-Ponto de entrada principal para o sistema completo.
-
-Este sistema implementa o caso de uso de importação de resultados de corrida
-via arquivo CSV e visualização de rankings por categoria, seguindo arquitetura UML.
-
-Autor: Sistema PaceHub
-Versão: 1.0
-"""
-
 import os
 import sys
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 
 # Adicionar o diretório atual ao path para imports
 current_dir = os.path.dirname(os.path.abspath(__file__))

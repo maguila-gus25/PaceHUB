@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import os
 from typing import Optional, Tuple
 from entidade.evento import obter_eventos_para_importacao

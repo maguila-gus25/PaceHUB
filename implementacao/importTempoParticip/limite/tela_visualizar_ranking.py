@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 from typing import Optional, Dict, List
 from entidade.evento import obter_evento_por_id
 from controlador.controlador_ranking import ControladorRanking

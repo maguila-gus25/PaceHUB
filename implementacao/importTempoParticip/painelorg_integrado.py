@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 from limite.tela_importar_resultados import executar_janela_importacao
 from limite.tela_visualizar_ranking import executar_janela_rankings, mostrar_estatisticas_evento, executar_busca_atleta
 from entidade.evento import EVENTOS_MOCK
