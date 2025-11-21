@@ -1,7 +1,6 @@
-# controle/controlador_inscricao.py
 import FreeSimpleGUI as sg
 import re
-# Importe os DAOs e Entidades
+from entidade.kit_de_corrida import KitDeCorrida
 from limite.tela_inscricao import TelaInscricao
 from persistencia.inscricao_dao import InscricaoDAO
 from persistencia.usuario_dao import UsuarioDAO
@@ -16,13 +15,14 @@ class ControladorInscricao:
         self.__tela_inscricao = TelaInscricao()
         self.__inscricao_dao = inscricao_dao
         self.__usuario_dao = usuario_dao
-
         self.__inscricao_encontrada: Inscricao | None = None
         self.__atleta_encontrado: Atleta | None = None
+        self.__kit_encontrado: KitDeCorrida | None = None
 
     def abre_tela_gerenciar_kits(self, evento_id: int, evento_nome: str):
         self.__inscricao_encontrada = None
         self.__atleta_encontrado = None
+        self.__kit_encontrado = None
 
         janela = self.__tela_inscricao.exibir_tela_gerenciar_kit(evento_nome)
 
@@ -66,20 +66,27 @@ class ControladorInscricao:
 
         self.__atleta_encontrado = usuario
 
-        inscricao = self.__inscricao_dao.get_by_atleta_and_evento(
+        inscricao, kit = self.__inscricao_dao.get_by_atleta_e_evento(
             self.__atleta_encontrado.cpf,
             evento_id
         )
 
         if not inscricao:
-            self.__controlador_sistema.exibir_popup_erro("Este atleta não está inscrito neste evento.")
-            self.limpar_campos_busca(janela)  # Limpa os dados do atleta
+            self.__controlador_sistema.exibir_popup_erro("Este atleta não está inscrito neste evento ou não selecionou kit.")
+            self.limpar_campos_busca(janela)
             return
 
+        # como é inner join, não precisamos verificar se if not kit, só irá buscar os atletas com kits cadastrados
+
         self.__inscricao_encontrada = inscricao
+        self.__kit_encontrado = kit
 
         janela['-NOME_ATLETA-'].update(self.__atleta_encontrado.nome)
         janela['-CPF_ATLETA-'].update(self.__atleta_encontrado.cpf)
+
+        if self.__kit_encontrado:
+            janela['-NOME_KIT-'].update(self.__kit_encontrado.nome)
+            janela['-VALOR_KIT-'].update(f"R$ {self.__kit_encontrado.valor:.2f}")
 
         status_kit = bool(self.__inscricao_encontrada.kit_entregue)
         janela['-KIT_ENTREGUE-'].update(value=status_kit, disabled=False)
@@ -89,8 +96,13 @@ class ControladorInscricao:
     def limpar_campos_busca(self, janela):
         self.__inscricao_encontrada = None
         self.__atleta_encontrado = None
+        self.__kit_encontrado = None
 
         janela['-NOME_ATLETA-'].update('[Nome do Atleta]')
         janela['-CPF_ATLETA-'].update('[CPF do Atleta]')
+
+        janela['-NOME_KIT-'].update('[Kit]')
+        janela['-VALOR_KIT-'].update('[R$ 0,00]')
+
         janela['-KIT_ENTREGUE-'].update(value=False, disabled=True)
         janela['-SALVAR-'].update(disabled=True)
