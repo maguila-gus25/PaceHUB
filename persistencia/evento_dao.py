@@ -96,6 +96,41 @@ class EventoDAO:
             if conexao:
                 conexao.close()
 
+    def get_by_id(self, evento_id: int):
+        """Busca um evento por ID."""
+        conexao = None
+        try:
+            conexao = self.__conectar()
+            conexao.row_factory = sqlite3.Row
+            cursor = conexao.cursor()
+
+            sql = "SELECT * FROM Eventos WHERE id = ?;"
+            cursor.execute(sql, (evento_id,))
+
+            dados = cursor.fetchone()
+
+            if dados:
+                evento = Evento(
+                    nome=dados['nome'],
+                    data=dados['data'],
+                    distancia=dados['distancia'],
+                    local_largada=dados['local_largada'],
+                    tempo_corte=dados['tempo_corte'],
+                    data_limite_cred=dados['data_limite_cred'],
+                    organizador_cpf=dados['organizador_cpf']
+                )
+                evento.id = dados['id']
+                return evento
+
+            return None
+
+        except sqlite3.Error as e:
+            print(f"Erro ao buscar evento: {e}")
+            return None
+        finally:
+            if conexao:
+                conexao.close()
+
     def get_kits_by_evento_id(self, evento_id: int):
         """Busca todos os kits associados a um ID de evento."""
         conexao = None
