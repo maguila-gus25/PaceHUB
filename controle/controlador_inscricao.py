@@ -40,16 +40,14 @@ class ControladorInscricao:
                 self.buscar_atleta_inscricao(janela, input_busca, evento_id)
 
             if evento == '-SALVAR-':
-                if self.__inscricao_encontrada:
-                    novo_status_kit = valores['-KIT_ENTREGUE-']
-                    self.__inscricao_dao.update_kit_entregue(
-                        self.__inscricao_encontrada.id,
-                        novo_status_kit
-                    )
-                    self.__controlador_sistema.exibir_popup_sucesso("Status do kit atualizado!")
-                    self.limpar_campos_busca(janela)
-                else:
-                    self.__controlador_sistema.exibir_popup_erro("Nenhuma inscrição selecionada para salvar.")
+                novo_status_kit = valores['-KIT_ENTREGUE-']
+                self.__inscricao_encontrada.kit_entregue = novo_status_kit
+                self.__inscricao_dao.update_kit_entregue(
+                    self.__inscricao_encontrada.id,
+                    novo_status_kit
+                )
+                self.exibir_popup_sucesso("Status do kit atualizado!")
+                self.limpar_campos_busca(janela)
 
         janela.close()
 
@@ -61,7 +59,7 @@ class ControladorInscricao:
         usuario = self.__usuario_dao.get(cpf_busca)
 
         if not isinstance(usuario, Atleta):
-            self.__controlador_sistema.exibir_popup_erro("Nenhum atleta encontrado com este CPF.")
+            self.exibir_popup_erro("Nenhum atleta encontrado com este CPF.")
             return
 
         self.__atleta_encontrado = usuario
@@ -72,7 +70,7 @@ class ControladorInscricao:
         )
 
         if not inscricao:
-            self.__controlador_sistema.exibir_popup_erro("Este atleta não está inscrito neste evento ou não selecionou kit.")
+            self.exibir_popup_erro("Este atleta não está inscrito neste evento ou não selecionou kit.")
             self.limpar_campos_busca(janela)
             return
 
@@ -106,3 +104,9 @@ class ControladorInscricao:
 
         janela['-KIT_ENTREGUE-'].update(value=False, disabled=True)
         janela['-SALVAR-'].update(disabled=True)
+
+    def exibir_popup_erro(self, mensagem: str):
+        sg.popup_error(mensagem, title="Erro")
+
+    def exibir_popup_sucesso(self, mensagem: str):
+        sg.popup_ok(mensagem, title="Sucesso")

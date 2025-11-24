@@ -32,6 +32,10 @@ class Inscricao:
     def kit_entregue(self):
         return self.__kit_entregue
 
+    @kit_entregue.setter
+    def kit_entregue(self, kit_entregue):
+        self.__kit_entregue = kit_entregue
+
     @property
     def status(self):
         return self.__status
