@@ -23,10 +23,7 @@ class TelaPrincipal:
             [sg.HSeparator(pad=(0, 10))],
             [sg.Text("Ainda não tem uma conta? Cadastre-se agora!", justification='center', expand_x=True)],
             [sg.Button("Cadastrar como Atleta", key='-CADASTRO_ATLETA-', expand_x=True, pad=(0, (10, 0)))],
-            [sg.Button("Cadastrar como Organizador", key='-CADASTRO_ORGANIZADOR-', expand_x=True,pad=(0, (10, 0)))],
-            [sg.Button("Criar Novo Evento", key='-CRIAR_EVENTO-', expand_x=True, pad=(0, (10, 0)))],
-            [sg.Button("Listar Atletas", key='-LISTAR_ATLETAS-', expand_x=True, pad=(0, (10, 0)))],
-            [sg.Button("Listar Organizadores", key='-LISTAR_ORGANIZADORES-', expand_x=True, pad=(0, (10, 0)))]
+            [sg.Button("Cadastrar como Organizador", key='-CADASTRO_ORGANIZADOR-', expand_x=True,pad=(0, (10, 0)))]
         ]
 
         janela = sg.Window("PaceHub - Bem-vindo", layout, element_justification='center', size=(400, 400))
