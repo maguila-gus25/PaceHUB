@@ -10,25 +10,6 @@ from typing import List, Tuple, Optional
 
 
 class ControladorEvento:
-    MSG_ERRO_CAMPOS_OBRIGATORIOS = 'Por favor, preencha todos os campos obrigatórios.'
-    MSG_ERRO_CAMPOS_KIT_OBRIGATORIOS = 'Todos os campos do kit são obrigatórios.'
-    MSG_ERRO_VALOR_NUMERICO_INVALIDO = 'O valor informado deve ser um número válido.'
-    MSG_ERRO_VALOR_NEGATIVO = 'O valor informado não pode ser negativo.'
-    MSG_ERRO_DATA_INVALIDA = 'As datas inseridas não são válidas.'
-    MSG_ERRO_DATA_PASSADO = 'A data do evento não pode ser no passado.'
-    MSG_ERRO_DATA_LIMITE_POSTERIOR = 'A data limite para cancelamento não pode ser posterior à data do evento.'
-    MSG_ERRO_TEMPO_CORTE_INTERVALO = 'O tempo de corte deve estar entre 0h00 e 24h00.'
-    MSG_ERRO_TEMPO_CORTE_EXCEDE_MAX = 'O tempo máximo não pode exceder 24h00.'
-    MSG_ERRO_TEMPO_CORTE_INVALIDO = 'O tempo de corte (horas e minutos) deve ser um número válido.'
-    MSG_ERRO_KIT_NAO_SELECIONADO = 'Por favor, selecione um kit da lista para editar.'
-    MSG_ERRO_VALIDACAO_DADOS = 'Erro na validação dos dados.'
-    MSG_ERRO_SALVAR_BANCO = 'Erro ao salvar no banco de dados.'
-    MSG_ERRO_ATUALIZAR_BANCO = 'Erro ao atualizar no banco de dados.'
-    MSG_ERRO_ADICIONAR_KIT = 'Erro ao adicionar kit.'
-    MSG_ERRO_REMOVER_KIT = 'Erro ao remover kit.'
-    MSG_ERRO_SALVAR_EDICAO_KIT = 'Erro ao salvar edição do kit.'
-    MSG_ERRO_CADASTRO_KIT_MINIMO = 'Por favor, cadastre pelo menos um kit.'
-    
     def __init__(self, controlador_sistema, evento_dao: EventoDAO, usuario_dao: UsuarioDAO):
         self.__controlador_sistema = controlador_sistema
         self.__tela_evento = TelaEvento()
@@ -56,7 +37,7 @@ class ControladorEvento:
         """Salva um evento no banco de dados."""
         try:
             self.__evento_dao.add_evento(evento)
-            self.__controlador_sistema.exibir_popup_sucesso('Evento criado e salvo no banco de dados.')
+            self.__controlador_sistema.exibir_popup_sucesso(self.MSG_SUCESSO_EVENTO_CRIADO)
             return True
         except Exception as e:
             self.__controlador_sistema.exibir_popup_erro(f'{self.MSG_ERRO_SALVAR_BANCO} {str(e)}')
@@ -66,7 +47,7 @@ class ControladorEvento:
         """Atualiza um evento existente no banco de dados."""
         try:
             self.__evento_dao.update_evento(evento)
-            self.__controlador_sistema.exibir_popup_sucesso('Evento ATUALIZADO no banco de dados.')
+            self.__controlador_sistema.exibir_popup_sucesso(self.MSG_SUCESSO_EVENTO_ATUALIZADO)
             return True
         except Exception as e:
             self.__controlador_sistema.exibir_popup_erro(f'{self.MSG_ERRO_ATUALIZAR_BANCO} {str(e)}')
@@ -135,7 +116,7 @@ class ControladorEvento:
         data_tuple = sg.popup_get_date(
             month_names=meses,
             day_abbreviations=dias,
-            title="Selecione uma data"
+            title=self.MSG_TITULO_SELECIONAR_DATA
         )
         
         if data_tuple:
@@ -238,7 +219,7 @@ class ControladorEvento:
     def atualizar_status_kits_na_interface(self, janela_principal, kits_lista: List[KitDeCorrida]) -> None:
         """Atualiza o status de kits na interface principal."""
         janela_principal['-STATUS_KITS-'].update(
-            f'{len(kits_lista)} kit(s) cadastrado(s).',
+            self.MSG_STATUS_KITS.format(len(kits_lista)),
             text_color='lime'
         )
     
@@ -425,3 +406,27 @@ class ControladorEvento:
                     break
 
         janela_principal.close()
+
+    # ========== MENSAGENS ==========
+    MSG_ERRO_CAMPOS_OBRIGATORIOS = 'Por favor, preencha todos os campos obrigatórios.'
+    MSG_ERRO_CAMPOS_KIT_OBRIGATORIOS = 'Todos os campos do kit são obrigatórios.'
+    MSG_ERRO_VALOR_NUMERICO_INVALIDO = 'O valor informado deve ser um número válido.'
+    MSG_ERRO_VALOR_NEGATIVO = 'O valor informado não pode ser negativo.'
+    MSG_ERRO_DATA_INVALIDA = 'As datas inseridas não são válidas.'
+    MSG_ERRO_DATA_PASSADO = 'A data do evento não pode ser no passado.'
+    MSG_ERRO_DATA_LIMITE_POSTERIOR = 'A data limite para cancelamento não pode ser posterior à data do evento.'
+    MSG_ERRO_TEMPO_CORTE_INTERVALO = 'O tempo de corte deve estar entre 0h00 e 24h00.'
+    MSG_ERRO_TEMPO_CORTE_EXCEDE_MAX = 'O tempo máximo não pode exceder 24h00.'
+    MSG_ERRO_TEMPO_CORTE_INVALIDO = 'O tempo de corte (horas e minutos) deve ser um número válido.'
+    MSG_ERRO_KIT_NAO_SELECIONADO = 'Por favor, selecione um kit da lista para editar.'
+    MSG_ERRO_VALIDACAO_DADOS = 'Erro na validação dos dados.'
+    MSG_ERRO_SALVAR_BANCO = 'Erro ao salvar no banco de dados.'
+    MSG_ERRO_ATUALIZAR_BANCO = 'Erro ao atualizar no banco de dados.'
+    MSG_ERRO_ADICIONAR_KIT = 'Erro ao adicionar kit.'
+    MSG_ERRO_REMOVER_KIT = 'Erro ao remover kit.'
+    MSG_ERRO_SALVAR_EDICAO_KIT = 'Erro ao salvar edição do kit.'
+    MSG_ERRO_CADASTRO_KIT_MINIMO = 'Por favor, cadastre pelo menos um kit.'
+    MSG_SUCESSO_EVENTO_CRIADO = 'Evento criado e salvo no banco de dados.'
+    MSG_SUCESSO_EVENTO_ATUALIZADO = 'Evento ATUALIZADO no banco de dados.'
+    MSG_TITULO_SELECIONAR_DATA = 'Selecione uma data'
+    MSG_STATUS_KITS = '{0} kit(s) cadastrado(s).'
