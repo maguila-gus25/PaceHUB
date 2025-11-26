@@ -72,3 +72,29 @@ class TelaCadastro:
             return None, None
 
         return evento, valores
+
+    def exibir_janela_edicao_organizador(self, nome: str, email: str):
+        sg.theme('DarkBlue14')
+
+        frame_dados_layout = [
+            [sg.Text("Nome Completo*", size=(15, 1)), sg.Input(key='-NOME-', default_text=nome)],
+            [sg.Text("Email*", size=(15, 1)), sg.Input(key='-EMAIL-', default_text=email)],
+            [sg.Text("Nova Senha", size=(15, 1)), sg.Input(key='-SENHA-', password_char='*')],
+            [sg.Text("(Deixe a senha em branco para não alterar)", font=("Helvetica", 8), text_color='yellow')]
+        ]
+
+        layout = [
+            [sg.Text("Edição de Perfil - Organizador", font=("Helvetica", 20))],
+            [sg.Frame("Dados Pessoais", frame_dados_layout)],
+            [sg.Button("Voltar", key='-VOLTAR-'), sg.Push(), sg.Button("Atualizar", key='-ATUALIZAR-')]
+        ]
+
+        janela = sg.Window("PaceHub - Edição de Perfil do Organizador", layout, modal=True)
+
+        evento, valores = janela.read()
+        janela.close()
+
+        if evento == sg.WIN_CLOSED:
+            return None, None
+
+        return evento, valores

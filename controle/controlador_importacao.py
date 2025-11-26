@@ -222,7 +222,7 @@ class ControladorImportacao:
         atleta = usuario
         
         # Validar se atleta está inscrito no evento
-        inscricao = self.__inscricao_dao.get_by_atleta_and_evento(cpf_limpo, evento_id)
+        inscricao, kit = self.__inscricao_dao.get_by_atleta_e_evento(cpf_limpo, evento_id)
         if not inscricao:
             erro = {
                 'tipo': 'atleta_nao_inscrito',

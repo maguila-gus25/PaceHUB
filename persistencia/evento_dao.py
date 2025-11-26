@@ -219,3 +219,30 @@ class EventoDAO:
         finally:
             if conexao:
                 conexao.close()
+
+    def delete_evento(self, evento_id: int):
+        """Deleta um evento e seus kits do banco de dados."""
+        conexao = None
+        try:
+            conexao = self.__conectar()
+            cursor = conexao.cursor()
+            
+            conexao.execute("BEGIN TRANSACTION;")
+            
+            # Deleta os kits do evento primeiro (embora cascade deveria fazer isso)
+            cursor.execute("DELETE FROM KitsDeCorrida WHERE evento_id = ?;", (evento_id,))
+            
+            # Deleta o evento
+            cursor.execute("DELETE FROM Eventos WHERE id = ?;", (evento_id,))
+            
+            conexao.commit()
+            print(f"Evento ID {evento_id} e seus kits deletados.")
+            
+        except sqlite3.Error as e:
+            if conexao:
+                conexao.rollback()
+            print(f"Erro ao deletar evento no SQLite: {e}")
+            raise e
+        finally:
+            if conexao:
+                conexao.close()

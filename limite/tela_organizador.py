@@ -25,12 +25,23 @@ class TelaOrganizador:
             )],
             [sg.Button('Gerenciar Entrega de Kits', key='-GERENCIAR_KITS-'),
              sg.Button('Editar Evento Selecionado', key='-EDITAR_EVENTO-'),
-             sg.Button('Importar Tempo dos Participantes', key='-IMPORTAR_TEMPOS-')]
+             sg.Button('Importar Tempo dos Participantes', key='-IMPORTAR_TEMPOS-')],
+            [sg.Button('Ver Resultados por Categoria', key='-VER_RESULTADOS-')]
         ]
 
+        # Coluna com botões à direita (mesmo tamanho)
+        # Calcula o tamanho baseado no texto mais longo
+        tamanho_botao = (len('Editar informações do cadastro') + 2, 1)
+        botoes_direita = [
+            [sg.Button('Editar informações do cadastro', key='-EDITAR_INFOS-', size=tamanho_botao)],
+            [sg.Button('Apagar Conta', key='-APAGAR_CONTA-', size=tamanho_botao)]
+        ]
+        
         layout = [
-            [sg.Text('Painel do Organizador', font=('Helvetica', 25, 'bold'))],
-            [sg.Text(f'Bem-vindo, {nome_organizador}!', font=('Helvetica', 14))],
+            [sg.Text('Painel do Organizador', font=('Helvetica', 25, 'bold')), 
+             sg.Push(), 
+             sg.Column(botoes_direita, element_justification='right', vertical_alignment='top')],
+            [sg.Text(f'Bem-vindo, {nome_organizador}!', font=('Helvetica', 14), key='-TEXTO_BEM_VINDO-')],
             [sg.Button('Criar Novo Evento', key='-CRIAR_EVENTO-', size=(20, 2), pad=((0,0), (10, 20)))],
             [sg.HSeparator()],
             [sg.Frame('', layout_eventos, background_color=sg.theme_background_color(), border_width=0)],
