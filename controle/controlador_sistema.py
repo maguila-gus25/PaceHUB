@@ -16,6 +16,7 @@ from controle.controlador_inscricao import ControladorInscricao
 from controle.controlador_importacao import ControladorImportacao
 from persistencia.resultado_dao import ResultadoDAO
 from limite.tela_importar_resultados import executar_janela_importacao
+from limite.tela_resultados import TelaResultados
 
 
 class ControladorSistema:
@@ -37,6 +38,7 @@ class ControladorSistema:
             self.__usuario_dao,
             self.__evento_dao
         )
+        self.__tela_resultados = TelaResultados()
 
     def iniciar(self):
         while True:
@@ -98,6 +100,14 @@ class ControladorSistema:
             evento, valores = janela_painel.read()
             if evento in(sg.WIN_CLOSED, '-SAIR-'):
                 break
+            if evento == '-EDITAR_INFOS-':
+                self.__controlador_organizador.abre_tela_editar(organizador)
+                janela_painel['-TEXTO_BEM_VINDO-'].update(f'Bem-vindo, {organizador.nome}!')
+            if evento == '-APAGAR_CONTA-':
+                if sg.popup_yes_no('Tem certeza que deseja apagar sua conta? Todos os eventos não concluídos serão deletados. Essa ação não pode ser desfeita.',
+                                   title='Atenção') == 'Yes':
+                    self.__controlador_organizador.deletar_organizador_e_eventos(organizador)
+                    break
             if evento == '-CRIAR_EVENTO-':
                 self.__controlador_evento.abre_tela_novo_evento(organizador)
 
@@ -163,6 +173,27 @@ class ControladorSistema:
                     eventos_do_organizador = self.__evento_dao.get_all_by_organizador(organizador.cpf)
                     dados_tabela_novos = self.preparar_dados_tabela_eventos(eventos_do_organizador)
                     janela_painel['-TABELA_EVENTOS-'].update(values=dados_tabela_novos)
+            if evento == '-VER_RESULTADOS-':
+                indices_selecionados = valores['-TABELA_EVENTOS-']
+                if not indices_selecionados:
+                    self.exibir_popup_erro("Por favor, selecione um evento na tabela primeiro.")
+                    continue
+                
+                indice_selecionado = indices_selecionados[0]
+                evento_selecionado = eventos_do_organizador[indice_selecionado]
+                
+                # Buscar resultados do evento
+                resultados = self.__resultado_dao.buscar_resultados_por_evento(evento_selecionado.id)
+                
+                if not resultados:
+                    self.exibir_popup_erro("Este evento ainda não possui resultados importados.")
+                    continue
+                
+                # Exibir resultados por categoria
+                self.__tela_resultados.exibir_resultados_por_categoria(
+                    evento_selecionado.nome,
+                    resultados
+                )
         janela_painel.close()
 
     def preparar_dados_tabela_eventos(self, eventos_do_organizador) -> list:

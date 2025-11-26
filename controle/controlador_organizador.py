@@ -65,3 +65,86 @@ class ControladorOrganizador:
 
         print("------------------------------------")
         self.__controlador_sistema.exibir_popup_sucesso("Lista de organizadores impressa no console/terminal!")
+
+    def abre_tela_editar(self, organizador: Organizador):
+        evento, valores = self.__tela_cadastro.exibir_janela_edicao_organizador(organizador.nome, organizador.email)
+        if evento is None or evento == sg.WIN_CLOSED or evento == '-VOLTAR-':
+            return
+
+        if evento == '-ATUALIZAR-':
+            novo_nome = valores['-NOME-']
+            novo_email = valores['-EMAIL-']
+            nova_senha = valores['-SENHA-']
+
+            if not novo_nome or not novo_nome.strip():
+                self.__controlador_sistema.exibir_popup_erro('O nome é obrigatório.')
+                return
+
+            if not novo_email or not novo_email.strip():
+                self.__controlador_sistema.exibir_popup_erro('O email é obrigatório.')
+                return
+
+            try:
+                # Atualiza senha se fornecida
+                if nova_senha and nova_senha.strip():
+                    senha_pura = nova_senha.encode('utf-8')
+                    senha_hash = bcrypt.hashpw(senha_pura, bcrypt.gensalt()).decode('utf-8')
+                    organizador.set_senha_hash(senha_hash)
+                
+                # Atualiza nome (sempre atualiza, mesmo se igual, para garantir sincronização)
+                if novo_nome and novo_nome.strip():
+                    organizador.nome = novo_nome
+                
+                # Atualiza email (sempre atualiza, mesmo se igual, para garantir sincronização)
+                if novo_email and novo_email.strip():
+                    organizador.email = novo_email
+                
+                # Persiste as mudanças no banco de dados
+                resultado = self.__usuario_dao.update(organizador)
+                if resultado:
+                    self.__controlador_sistema.exibir_popup_sucesso('Dados atualizados com sucesso')
+                else:
+                    self.__controlador_sistema.exibir_popup_erro('Erro ao atualizar dados no banco de dados')
+            except ValueError as e:
+                self.__controlador_sistema.exibir_popup_erro(str(e))
+            except Exception as e:
+                self.__controlador_sistema.exibir_popup_erro(f'Erro ao atualizar organizador: {e}')
+
+    def deletar_organizador_e_eventos(self, organizador: Organizador):
+        from datetime import datetime
+        from persistencia.evento_dao import EventoDAO
+        from persistencia.inscricao_dao import InscricaoDAO
+
+        evento_dao = EventoDAO()
+        inscricao_dao = InscricaoDAO()
+
+        # Busca todos os eventos do organizador
+        eventos_do_organizador = evento_dao.get_all_by_organizador(organizador.cpf)
+
+        # Filtra eventos não concluídos (data >= hoje)
+        eventos_nao_concluidos = []
+        for evento in eventos_do_organizador:
+            try:
+                data_evento_obj = datetime.strptime(evento.data, '%d/%m/%Y')
+                if data_evento_obj >= datetime.now():
+                    eventos_nao_concluidos.append(evento)
+            except ValueError:
+                # Se a data for inválida, considera como não concluído para segurança
+                eventos_nao_concluidos.append(evento)
+
+        # Deleta eventos não concluídos e suas inscrições
+        for evento in eventos_nao_concluidos:
+            try:
+                # Deleta todas as inscrições do evento
+                inscricao_dao.delete_by_evento(evento.id)
+                # Deleta o evento (kits serão deletados via cascade)
+                evento_dao.delete_evento(evento.id)
+            except Exception as e:
+                print(f"Erro ao deletar evento {evento.id}: {e}")
+
+        # Deleta o organizador
+        try:
+            self.__usuario_dao.remove(organizador.cpf)
+            self.__controlador_sistema.exibir_popup_sucesso('Conta e eventos não concluídos apagados com sucesso.')
+        except Exception as e:
+            self.__controlador_sistema.exibir_popup_erro(f'Erro ao deletar organizador: {e}')

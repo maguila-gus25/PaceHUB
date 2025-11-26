@@ -116,3 +116,27 @@ class InscricaoDAO:
         finally:
             if conexao:
                 conexao.close()
+
+    def delete_by_evento(self, evento_id: int):
+        """Deleta todas as inscrições de um evento específico."""
+        conexao = None
+        try:
+            conexao = self.__conectar()
+            cursor = conexao.cursor()
+
+            sql = "DELETE FROM inscricoes WHERE evento_id = ?;"
+            cursor.execute(sql, (evento_id,))
+
+            removidas = cursor.rowcount
+            conexao.commit()
+            print(f"{removidas} inscrição(ões) deletada(s) para o evento ID {evento_id}.")
+            return removidas
+
+        except sqlite3.Error as e:
+            if conexao:
+                conexao.rollback()
+            print(f"Erro ao deletar inscrições: {e}")
+            return 0
+        finally:
+            if conexao:
+                conexao.close()

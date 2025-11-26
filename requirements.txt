@@ -1,0 +1,3 @@
+freesimplegui==5.2.0.post1
+bcrypt==5.0.0
+
