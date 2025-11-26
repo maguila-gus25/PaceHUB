@@ -195,7 +195,7 @@ cd PaceHub
 
 2. Instale as dependências:
 ```bash
-pip install FreeSimpleGUI bcrypt
+pip install -r requirements.txt
 ```
 
 3. Crie o banco de dados:
