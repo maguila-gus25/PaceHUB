@@ -3,12 +3,14 @@ import FreeSimpleGUI as sg
 import re
 from entidade.atleta import Atleta
 from limite.tela_cadastro import TelaCadastro
+from limite.tela_atleta import TelaAtleta
 
 
 class ControladorAtleta:
     def __init__(self, controlador_sistema, usuario_dao):
         self.__controlador_sistema = controlador_sistema
         self.__tela_cadastro = TelaCadastro()
+        self.__tela_atleta = TelaAtleta()
         self.__usuario_dao = usuario_dao
 
     def abre_tela_cadastro(self):
@@ -50,18 +52,43 @@ class ControladorAtleta:
             except Exception as e:
                 self.__controlador_sistema.exibir_popup_erro(f'Erro ao criar atleta: {e}')
 
-    def listar_atletas(self):
-        print("\n--- LISTANDO ATLETAS CADASTRADOS ---")
-        todos_usuarios = self.__usuario_dao.get_all()
-        if not todos_usuarios:
-            print("Nenhum atleta cadastrado no momento.")
-            self.__controlador_sistema.exibir_popup_sucesso("Nenhum atleta cadastrado.")
+    def abrir_painel_principal(self, atleta: Atleta):
+        eventos_disponiveis = []
+        janela_painel = self.__tela_atleta.exibir_painel(atleta.nome, eventos_disponiveis)
+        while True:
+            evento, valores = janela_painel.read()
+            if evento in(sg.WIN_CLOSED, '-SAIR-'):
+                break
+            if evento == '-EDITAR_INFOS-':
+                self.abre_tela_editar(atleta)
+                janela_painel['-TEXTO_BEM_VINDO-'].update(f'Bem-vindo, {atleta.nome}!')
+            if evento == '-APAGAR_CONTA-':
+                if sg.popup_yes_no('Tem certeza que deseja apagar sua conta? Essa ação não pode ser desfeita.',
+                                   title='Atenção') == 'Yes':
+                    self.__usuario_dao.remove(atleta.cpf)
+                    self.__controlador_sistema.exibir_popup_sucesso('Conta apagada com sucesso.')
+                    break
+        janela_painel.close()
+
+    def abre_tela_editar(self, atleta:Atleta):
+        evento, valores = self.__tela_cadastro.exibir_janela_edicao(atleta.nome, atleta.email)
+        if evento is None or evento == sg.WIN_CLOSED or evento == '-VOLTAR-':
             return
 
-        for usuario in todos_usuarios:
-            if isinstance(usuario, Atleta):
-                print(
-                    f"Nome: {usuario.nome}, CPF: {usuario.cpf}, Email: {usuario.email}, Genero: {usuario.genero}, PCD: {usuario.pcd}")
-
-        print("------------------------------------")
-        self.__controlador_sistema.exibir_popup_sucesso("Lista de atletas impressa no console/terminal!")
+        if evento == '-ATUALIZAR-':
+            novo_nome = valores['-NOME-']
+            novo_email = valores['-EMAIL-']
+            nova_senha = valores['-SENHA-']
+            try:
+                if nova_senha and nova_senha.strip():
+                    senha_pura = nova_senha.encode('utf-8')
+                    senha_hash = bcrypt.hashpw(senha_pura, bcrypt.gensalt()).decode('utf-8')
+                    atleta.set_senha_hash(senha_hash)
+                if novo_nome and novo_nome.strip() and novo_nome != atleta.nome:
+                    atleta.nome = novo_nome
+                if novo_email and novo_nome.strip() and novo_email != atleta.email:
+                    atleta.email = novo_email
+                self.__usuario_dao.update(atleta)
+                self.__controlador_sistema.exibir_popup_sucesso('Dados atualizados com sucesso')
+            except ValueError as e:
+                self.__controlador_sistema.exibir_popup_erro(str(e))

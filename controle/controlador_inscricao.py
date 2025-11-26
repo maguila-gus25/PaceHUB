@@ -74,8 +74,6 @@ class ControladorInscricao:
             self.limpar_campos_busca(janela)
             return
 
-        # como é inner join, não precisamos verificar se if not kit, só irá buscar os atletas com kits cadastrados
-
         self.__inscricao_encontrada = inscricao
         self.__kit_encontrado = kit
 

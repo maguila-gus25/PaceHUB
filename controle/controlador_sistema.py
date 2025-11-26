@@ -6,6 +6,7 @@ from entidade.atleta import Atleta
 from entidade.organizador import Organizador
 from limite.tela_organizador import TelaOrganizador
 from limite.tela_principal import TelaPrincipal
+from limite.tela_atleta import TelaAtleta
 from controle.controlador_atleta import ControladorAtleta
 from persistencia.inscricao_dao import InscricaoDAO
 from persistencia.usuario_dao import UsuarioDAO
@@ -24,6 +25,7 @@ class ControladorSistema:
         self.__usuario_dao = UsuarioDAO()
         self.__inscricao_dao = InscricaoDAO()
         self.__tela_organizador = TelaOrganizador()
+        self.__tela_atleta = TelaAtleta()
         self.__controlador_atleta = ControladorAtleta(self, self.__usuario_dao)
         self.__controlador_organizador = ControladorOrganizador(self, self.__usuario_dao)
         self.__controlador_evento = ControladorEvento(self, self.__evento_dao, self.__usuario_dao)
@@ -70,7 +72,7 @@ class ControladorSistema:
         if isinstance(usuario, Organizador):
             self.iniciar_painel_organizador(usuario)
         elif isinstance(usuario, Atleta):
-            self.exibir_popup_erro("Painel do Atleta ainda não implementado.")
+            self.__controlador_atleta.abrir_painel_principal(usuario)
         else:
             self.exibir_popup_erro("Tipo de usuário desconhecido.")
 
@@ -132,8 +134,7 @@ class ControladorSistema:
                 
                 indice_selecionado = indices_selecionados[0]
                 evento_selecionado = eventos_do_organizador[indice_selecionado]
-                
-                # Verificar se evento está concluído
+
                 try:
                     data_evento_obj = datetime.strptime(evento_selecionado.data, '%d/%m/%Y')
                     if data_evento_obj >= datetime.now():
@@ -142,8 +143,6 @@ class ControladorSistema:
                 except ValueError:
                     self.exibir_popup_erro("Data do evento inválida.")
                     continue
-                
-                # Abrir tela de importação
                 sucesso = executar_janela_importacao(
                     self.__controlador_importacao,
                     evento_selecionado.id,
@@ -151,7 +150,6 @@ class ControladorSistema:
                 )
                 
                 if sucesso:
-                    # Atualizar tabela de eventos se necessário
                     eventos_do_organizador = self.__evento_dao.get_all_by_organizador(organizador.cpf)
                     dados_tabela_novos = self.preparar_dados_tabela_eventos(eventos_do_organizador)
                     janela_painel['-TABELA_EVENTOS-'].update(values=dados_tabela_novos)

@@ -163,13 +163,24 @@ class UsuarioDAO:
         conexao.close()
         return True
 
-
     def remove(self, cpf):
         conexao = self.__conectar()
         cursor = conexao.cursor()
 
-        sql = "DELETE FROM usuarios WHERE cpf = ?;"
-        cursor.execute(sql, [cpf])
+        try:
+            sql_delete_inscricoes = "DELETE FROM inscricoes WHERE atleta_cpf = ?;"
+            cursor.execute(sql_delete_inscricoes, (cpf,))
 
-        conexao.commit()
-        conexao.close()
+            sql_delete_usuario = "DELETE FROM usuarios WHERE cpf = ?;"
+            cursor.execute(sql_delete_usuario, (cpf,))
+
+            conexao.commit()
+            return True
+
+        except sqlite3.Error as e:
+            print(f"Erro ao excluir usuário: {e}")
+            conexao.rollback()
+            return False
+
+        finally:
+            conexao.close()

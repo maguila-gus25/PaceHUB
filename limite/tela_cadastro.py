@@ -44,3 +44,31 @@ class TelaCadastro:
             return None, None
 
         return evento, valores
+
+    def exibir_janela_edicao(self, nome, email):
+        sg.theme('DarkBlue14')
+
+        frame_dados_layout = [
+            [sg.Text("Nome Completo*", size=(15, 1)), sg.Input(key='-NOME-', default_text=nome)]
+        ]
+        frame_dados_layout.extend([
+            [sg.Text("Email*", size=(15, 1)), sg.Input(key='-EMAIL-', default_text=email)],
+            [sg.Text("Nova Senha", size=(15, 1)), sg.Input(key='-SENHA-', password_char='*')],
+            [sg.Text("(Deixe a senha em branco para não alterar)", font=("Helvetica", 8), text_color='yellow')]
+        ])
+
+        layout = [
+            [sg.Text(f"Edição de Perfil", font=("Helvetica", 20))],
+            [sg.Frame("Dados Pessoais", frame_dados_layout)],
+            [sg.Button("Voltar", key='-VOLTAR-'), sg.Push(), sg.Button("Atualizar", key='-ATUALIZAR-')]
+        ]
+
+        janela = sg.Window(f"PaceHub - Edicao de Perfil", layout, modal=True)
+
+        evento, valores = janela.read()
+        janela.close()
+
+        if evento == sg.WIN_CLOSED:
+            return None, None
+
+        return evento, valores
