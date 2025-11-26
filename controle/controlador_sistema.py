@@ -50,16 +50,21 @@ class ControladorSistema:
                 self.__controlador_organizador.abre_tela_cadastro()
             elif evento == 'Login':
                 self.processar_login(valores)
-            elif evento == '-LISTAR_ATLETAS-':
-                self.__controlador_atleta.listar_atletas()
-            elif evento == '-LISTAR_ORGANIZADORES-':
-                self.__controlador_organizador.listar_organizadores()
 
     def processar_login(self, valores_login):
         cpf_input = valores_login.get('-CPF_LOGIN-', '')
+        senha_input = valores_login.get('-SENHA_LOGIN-')
+
+        if not cpf_input and not senha_input:
+            self.exibir_popup_erro("Por favor, preencha os campos.")
+            return
 
         if not cpf_input:
             self.exibir_popup_erro("Por favor, insira um CPF.")
+            return
+
+        if not senha_input:
+            self.exibir_popup_erro("Por favor, insira sua senha.")
             return
 
         cpf_limpo = re.sub(r'[^0-9]', '', cpf_input)
@@ -68,13 +73,18 @@ class ControladorSistema:
         if usuario is None:
             self.exibir_popup_erro("CPF não encontrado.")
             return
-
-        if isinstance(usuario, Organizador):
-            self.iniciar_painel_organizador(usuario)
-        elif isinstance(usuario, Atleta):
-            self.__controlador_atleta.abrir_painel_principal(usuario)
-        else:
-            self.exibir_popup_erro("Tipo de usuário desconhecido.")
+        try:
+            if usuario.verifica_senha_hash(senha_input):
+                if isinstance(usuario, Organizador):
+                    self.iniciar_painel_organizador(usuario)
+                elif isinstance(usuario, Atleta):
+                    self.__controlador_atleta.abrir_painel_principal(usuario)
+                else:
+                    self.exibir_popup_erro("Tipo de usuário desconhecido.")
+            else:
+                self.exibir_popup_erro("Senha incorreta.")
+        except Exception as e:
+            self.exibir_popup_erro(f"Erro ao verificar credenciais: {e}")
 
     def iniciar_painel_organizador(self, organizador: Organizador):
 
