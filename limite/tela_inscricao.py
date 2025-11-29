@@ -36,3 +36,66 @@ class TelaInscricao:
         ]
 
         return sg.Window('PaceHub - Gerenciar Kits', layout, finalize=True, modal=True)
+
+    def exibir_lista_inscritos(self, nome_evento: str, dados_inscritos: list):
+        """Exibe uma janela com a lista de inscritos no evento."""
+        sg.theme('DarkBlue14')
+
+        cabecalhos = ['Nome', 'CPF', 'Data Inscrição', 'Kit', 'Status']
+
+        # Preparar dados para a tabela
+        dados_tabela = []
+        for inscricao in dados_inscritos:
+            # Formatar data de inscrição
+            try:
+                from datetime import datetime
+                data_obj = datetime.strptime(inscricao['data_inscricao'], '%Y-%m-%d %H:%M:%S')
+                data_formatada = data_obj.strftime('%d/%m/%Y %H:%M')
+            except:
+                data_formatada = inscricao['data_inscricao']
+
+            # Formatar status
+            status_map = {0: 'Pendente', 1: 'Paga'}
+            status = status_map.get(inscricao['status'], 'Desconhecido')
+
+            dados_tabela.append([
+                inscricao['atleta_nome'],
+                inscricao['atleta_cpf'],
+                data_formatada,
+                inscricao['kit_nome'],
+                status
+            ])
+
+        layout = [
+            [sg.Text(f'Lista de Inscritos - {nome_evento}', font=('Helvetica', 20, 'bold'))],
+            [sg.HSeparator()],
+            [sg.Text(f'Total de inscritos: {len(dados_tabela)}', font=('Helvetica', 12))],
+            [sg.Table(
+                values=dados_tabela,
+                headings=cabecalhos,
+                auto_size_columns=False,
+                col_widths=[30, 15, 18, 25, 12],
+                justification='left',
+                num_rows=min(15, len(dados_tabela)) if dados_tabela else 1,
+                display_row_numbers=False,
+                expand_x=True,
+                expand_y=True,
+                key='-TABELA_INSCRITOS-'
+            )],
+            [sg.Button('Fechar', key='-FECHAR-')]
+        ]
+
+        janela = sg.Window(
+            f'PaceHub - Lista de Inscritos - {nome_evento}',
+            layout,
+            finalize=True,
+            size=(900, 600),
+            resizable=True
+        )
+
+        while True:
+            evento, valores = janela.read()
+            if evento in (sg.WIN_CLOSED, '-FECHAR-'):
+                break
+
+        janela.close()

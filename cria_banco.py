@@ -27,6 +27,7 @@ sql_eventos = """
                 tempo_corte TEXT,
                 data_limite_cred TEXT,
                 organizador_cpf TEXT NOT NULL,
+                resultados_publicados INTEGER DEFAULT 0,
                 FOREIGN KEY (organizador_cpf) REFERENCES usuarios (cpf)
             );"""
 
@@ -106,5 +107,16 @@ try:
     print('Índices da tabela "Resultados" criados com sucesso!')
 except Exception as e:
     print(f"Erro ao criar tabela Resultados: {e}")
+
+# Migração: Adicionar coluna resultados_publicados se não existir
+try:
+    cursor.execute("PRAGMA table_info(Eventos)")
+    colunas = [row[1] for row in cursor.fetchall()]
+    if 'resultados_publicados' not in colunas:
+        cursor.execute("ALTER TABLE Eventos ADD COLUMN resultados_publicados INTEGER DEFAULT 0;")
+        conexao.commit()
+        print('Coluna "resultados_publicados" adicionada à tabela Eventos!')
+except Exception as e:
+    print(f"Erro ao adicionar coluna resultados_publicados: {e}")
 
 conexao.close()
