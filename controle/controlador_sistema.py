@@ -282,6 +282,10 @@ class ControladorSistema:
         return dados_formatados
 
 
+    def abrir_tela_inscricao_atleta(self, evento_id: int, atleta: Atleta):
+        """Abre a tela de inscrição para o atleta se inscrever em um evento."""
+        self.__controlador_inscricao.abre_tela_inscricao_atleta(evento_id, atleta)
+
     def exibir_popup_erro(self, mensagem: str):
         sg.popup_error(mensagem, title="Erro")
 

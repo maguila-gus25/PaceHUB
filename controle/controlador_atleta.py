@@ -202,6 +202,32 @@ class ControladorAtleta:
                     resultado_selecionado['evento_nome'],
                     resultado_selecionado
                 )
+            if evento == '-INSCREVER_EVENTO-':
+                indices_selecionados = valores['-TABELA_EVENTOS-']
+                if not indices_selecionados:
+                    self.__controlador_sistema.exibir_popup_erro("Por favor, selecione um evento na tabela primeiro.")
+                    continue
+                
+                indice_selecionado = indices_selecionados[0]
+                evento_selecionado = eventos_disponiveis[indice_selecionado]
+                
+                # Verificar se o evento tem ID
+                if not hasattr(evento_selecionado, 'id') or not evento_selecionado.id:
+                    self.__controlador_sistema.exibir_popup_erro("Erro ao obter informações do evento.")
+                    continue
+                
+                # Abrir tela de inscrição
+                self.__controlador_sistema.abrir_tela_inscricao_atleta(evento_selecionado.id, atleta)
+                
+                # Atualizar lista de inscrições após possível nova inscrição
+                inscricoes = self.__inscricao_dao.get_all_by_atleta(atleta.cpf)
+                dados_tabela_inscricoes = self.preparar_dados_inscricoes(inscricoes)
+                janela_painel['-TABELA_INSCRICOES-'].update(values=dados_tabela_inscricoes)
+                
+                # Atualizar lista de eventos disponíveis (pode ter mudado o status)
+                eventos_disponiveis = self.__evento_dao.get_all_disponiveis()
+                dados_tabela_eventos = self.preparar_dados_eventos_disponiveis(eventos_disponiveis)
+                janela_painel['-TABELA_EVENTOS-'].update(values=dados_tabela_eventos)
         janela_painel.close()
 
     def deletar_atleta_e_inscricoes_ativas(self, atleta: Atleta):

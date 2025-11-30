@@ -18,6 +18,7 @@ def limpar_tabelas(cursor):
     print("Limpando tabelas existentes...")
     try:
         cursor.execute("DELETE FROM Resultados;")
+        cursor.execute("DELETE FROM FichasMedicas;")
         cursor.execute("DELETE FROM inscricoes;")
         cursor.execute("DELETE FROM KitsDeCorrida;")
         cursor.execute("DELETE FROM Eventos;")

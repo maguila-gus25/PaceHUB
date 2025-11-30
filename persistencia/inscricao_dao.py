@@ -37,7 +37,7 @@ class InscricaoDAO:
             inscricao.id = cursor.lastrowid
 
             conexao.commit()
-            print(f"Inscrição ID {inscricao.id} salva para o atleta {inscricao.atleta_cpf}")
+            print(f"Inscrição ID {inscricao.id} salva para o atleta {inscricao.atleta_cpf_str}")
             conexao.close()
 
     def get_by_atleta_e_evento(self, atleta_cpf, evento_id):

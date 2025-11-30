@@ -57,6 +57,23 @@ sql_inscricao = """
             );
             """
 
+sql_fichas_medicas = """
+            CREATE TABLE IF NOT EXISTS FichasMedicas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                inscricao_id INTEGER NOT NULL UNIQUE,
+                preenchida INTEGER NOT NULL DEFAULT 0,
+                pergunta1 INTEGER,
+                pergunta2 INTEGER,
+                pergunta3 INTEGER,
+                pergunta4 INTEGER,
+                pergunta5 INTEGER,
+                pergunta6 INTEGER,
+                pergunta7 INTEGER,
+                declaracao_saude INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY (inscricao_id) REFERENCES Inscricoes(ID) ON DELETE CASCADE
+            );
+            """
+
 sql_resultados = """
             CREATE TABLE IF NOT EXISTS Resultados (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -98,6 +115,12 @@ except Exception as e:
     print(f"Erro ao criar tabela Inscrições: {e}")
 
 try:
+    cursor.execute(sql_fichas_medicas)
+    print('Tabela "FichasMedicas" criada com sucesso (ou já existia)!')
+except Exception as e:
+    print(f"Erro ao criar tabela FichasMedicas: {e}")
+
+try:
     cursor.execute(sql_resultados)
     print('Tabela "Resultados" criada com sucesso (ou já existia)!')
     
@@ -119,4 +142,15 @@ try:
 except Exception as e:
     print(f"Erro ao adicionar coluna resultados_publicados: {e}")
 
+# Migração: Criar tabela FichasMedicas se não existir (para bancos antigos)
+try:
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='FichasMedicas';")
+    if not cursor.fetchone():
+        cursor.execute(sql_fichas_medicas)
+        conexao.commit()
+        print('Tabela "FichasMedicas" criada via migração!')
+except Exception as e:
+    print(f"Erro ao criar tabela FichasMedicas via migração: {e}")
+
+conexao.commit()
 conexao.close()
